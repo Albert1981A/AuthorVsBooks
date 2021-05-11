@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LibraryServiceImplementation implements LibraryService {
+public class LibraryServiceImplementation extends ClientService implements LibraryService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;

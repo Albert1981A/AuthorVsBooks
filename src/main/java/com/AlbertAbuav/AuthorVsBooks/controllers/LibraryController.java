@@ -3,6 +3,8 @@ package com.AlbertAbuav.AuthorVsBooks.controllers;
 import com.AlbertAbuav.AuthorVsBooks.beans.Author;
 import com.AlbertAbuav.AuthorVsBooks.exceptions.LibraryCustomException;
 import com.AlbertAbuav.AuthorVsBooks.service.LibraryService;
+import com.AlbertAbuav.AuthorVsBooks.wrappers.ListOfAuthors;
+import com.AlbertAbuav.AuthorVsBooks.wrappers.ListOfBooks;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,30 +27,30 @@ public class LibraryController {
     }
 
     @GetMapping("authors")  //==>  http://localhost:8080/library/authors
-    public ResponseEntity<?> getAllAuthors() {
-        return new ResponseEntity<>(libraryService.getAllAuthors(), HttpStatus.OK); //==> Return body + 200
+    public ResponseEntity<?> getAllAuthors(@RequestHeader(name = "Authorization") String token) {
+        return new ResponseEntity<>(new ListOfAuthors(libraryService.getAllAuthors()), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("books")  //==>  http://localhost:8080/library/books
     public ResponseEntity<?> getAllBooks() {
-        return new ResponseEntity<>(libraryService.getAllBooks(), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(new ListOfBooks(libraryService.getAllBooks()), HttpStatus.OK); //==> Return body + 200
     }
 
     @DeleteMapping("authors/{id}")  //==>  http://localhost:8080/library/authors/4
     public ResponseEntity<?> deleteAuthorById(@PathVariable int id) {
         libraryService.deleteAuthorById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 204 (ok and no content)
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
     }
 
     @GetMapping("books/date/between")  //==>  http://localhost:8080/library/books/date/between
     public ResponseEntity<?> getAllBooksBetweenYears(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                                      @RequestParam("end")   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) throws LibraryCustomException {
-        return new ResponseEntity<>(libraryService.getAllBooksBetweenYears(start, end), HttpStatus.OK);
+        return new ResponseEntity<>(new ListOfBooks(libraryService.getAllBooksBetweenYears(start, end)), HttpStatus.OK);
     }
 
     @GetMapping("books/date/between/by-int")  //==>  http://localhost:8080/library/books/date/between/by-int
     public ResponseEntity<?> getAllBooksBetweenYearsByInt(@RequestParam int start, @RequestParam int end) throws LibraryCustomException {
-        return new ResponseEntity<>(libraryService.getAllBooksBetweenYearsByInt(start, end), HttpStatus.OK);
+        return new ResponseEntity<>(new ListOfBooks(libraryService.getAllBooksBetweenYearsByInt(start, end)), HttpStatus.OK);
     }
 
     @PutMapping("authors")  //==>  http://localhost:8080/library/authors
