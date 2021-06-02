@@ -2,15 +2,21 @@ package com.AlbertAbuav.AuthorVsBooks.controllers;
 
 import com.AlbertAbuav.AuthorVsBooks.beans.Author;
 import com.AlbertAbuav.AuthorVsBooks.exceptions.LibraryCustomException;
+import com.AlbertAbuav.AuthorVsBooks.exceptions.LibrarySecurityException;
+import com.AlbertAbuav.AuthorVsBooks.security.TokenManager;
 import com.AlbertAbuav.AuthorVsBooks.service.LibraryService;
 import com.AlbertAbuav.AuthorVsBooks.wrappers.ListOfAuthors;
 import com.AlbertAbuav.AuthorVsBooks.wrappers.ListOfBooks;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import javax.print.DocFlavor;
 import java.time.LocalDate;
 
 @RestController
@@ -19,6 +25,7 @@ import java.time.LocalDate;
 public class LibraryController {
 
     private final LibraryService libraryService;
+    private final TokenManager tokenManager;
 
     @PostMapping("authors")  //==>  http://localhost:8080/library/authors
     public ResponseEntity<?> addAuthor(@RequestBody Author author) {
@@ -27,7 +34,10 @@ public class LibraryController {
     }
 
     @GetMapping("authors")  //==>  http://localhost:8080/library/authors
-    public ResponseEntity<?> getAllAuthors(@RequestHeader(name = "Authorization") String token) {
+    public ResponseEntity<?> getAllAuthors(@RequestHeader(name = "Authorization") String token) throws LibrarySecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new LibrarySecurityException("You are not allowed to enter");
+        }
         return new ResponseEntity<>(new ListOfAuthors(libraryService.getAllAuthors()), HttpStatus.OK); //==> Return body + 200
     }
 

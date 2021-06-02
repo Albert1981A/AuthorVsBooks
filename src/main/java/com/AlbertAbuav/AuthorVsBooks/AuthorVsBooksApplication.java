@@ -26,7 +26,7 @@ public class AuthorVsBooksApplication {
 		ApplicationContext ctx = SpringApplication.run(AuthorVsBooksApplication.class, args);
 		System.out.println("Spring Ioc container was loaded!");
 
-		// 2:33
+
 	}
 
 }

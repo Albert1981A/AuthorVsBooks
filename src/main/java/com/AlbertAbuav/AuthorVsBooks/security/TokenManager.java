@@ -1,6 +1,7 @@
 package com.AlbertAbuav.AuthorVsBooks.security;
 
 import com.AlbertAbuav.AuthorVsBooks.serviceimplementation.ClientService;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
+@Data
 public class TokenManager {
 
     @Autowired
@@ -25,6 +27,10 @@ public class TokenManager {
             return true;
         }
         return false;
+    }
+
+    public void removeExpiredToken(int minutes) {
+        map.values().removeIf(x->x.getTime().plusMinutes(minutes).isBefore(LocalDateTime.now()));
     }
 
 }
